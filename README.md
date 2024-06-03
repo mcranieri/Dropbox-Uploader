@@ -1,6 +1,6 @@
 # Dropbox Uploader
 
-Dropbox Uploader is a **BASH** script which can be used to upload, download, delete, list files (and more!) from **Dropbox**, an online file sharing, synchronization and backup service. 
+Dropbox Uploader is a **BASH** script which can be used to upload, download, delete, list files (and more!) from **Dropbox**, an online file sharing, synchronization and backup service.
 
 It's written in BASH scripting language and only needs **cURL**.
 
@@ -9,7 +9,7 @@ You can take a look to the [GitHub project page](https://github.com/andreafabriz
 **Why use this script?**
 
 * **Portable:** It's written in BASH scripting and only needs `cURL` (curl is a tool to transfer data from or to a server, available for all operating systems and installed by default in many linux distributions).
-* **Secure:** It's not required to provide your username/password to this script, because it uses the official Dropbox API v2 for the authentication process. 
+* **Secure:** It's not required to provide your username/password to this script, because it uses the official Dropbox API v2 for the authentication process.
 
 Please refer to the [Wiki](https://github.com/andreafabrizi/Dropbox-Uploader/wiki) for tips and additional information about this project. The Wiki is also the place where you can share your scripts and examples related to Dropbox Uploader.
 
@@ -26,6 +26,7 @@ Please refer to the [Wiki](https://github.com/andreafabrizi/Dropbox-Uploader/wik
 * Delete/Move/Rename/Copy/List/Share files
 * Create share link
 * Monitor for changes
+* Manage dropbox namespace for root path
 
 ## Getting started
 
@@ -63,80 +64,85 @@ The syntax is quite simple:
 
 **Available commands:**
 
-* **upload** &lt;LOCAL_FILE/DIR ...&gt; &lt;REMOTE_FILE/DIR&gt;  
-Upload a local file or directory to a remote Dropbox folder.  
-If the file is bigger than 150Mb the file is uploaded using small chunks (default 50Mb); 
-in this case a . (dot) is printed for every chunk successfully uploaded and a * (star) if an error 
+* **upload** &lt;LOCAL_FILE/DIR ...&gt; &lt;REMOTE_FILE/DIR&gt;
+Upload a local file or directory to a remote Dropbox folder.
+If the file is bigger than 150Mb the file is uploaded using small chunks (default 50Mb);
+in this case a . (dot) is printed for every chunk successfully uploaded and a * (star) if an error
 occurs (the upload is retried for a maximum of three times).
 Only if the file is smaller than 150Mb, the standard upload API is used, and if the -p option is specified
-the default curl progress bar is displayed during the upload process.  
+the default curl progress bar is displayed during the upload process.
 The local file/dir parameter supports wildcards expansion.
 
-* **download** &lt;REMOTE_FILE/DIR&gt; [LOCAL_FILE/DIR]  
+* **download** &lt;REMOTE_FILE/DIR&gt; [LOCAL_FILE/DIR]
 Download file or directory from Dropbox to a local folder
 
-* **delete** &lt;REMOTE_FILE/DIR&gt;  
+* **delete** &lt;REMOTE_FILE/DIR&gt;
 Remove a remote file or directory from Dropbox
 
-* **move** &lt;REMOTE_FILE/DIR&gt; &lt;REMOTE_FILE/DIR&gt;  
+* **move** &lt;REMOTE_FILE/DIR&gt; &lt;REMOTE_FILE/DIR&gt;
 Move or rename a remote file or directory
 
-* **copy** &lt;REMOTE_FILE/DIR&gt; &lt;REMOTE_FILE/DIR&gt;  
+* **copy** &lt;REMOTE_FILE/DIR&gt; &lt;REMOTE_FILE/DIR&gt;
 Copy a remote file or directory
 
-* **mkdir** &lt;REMOTE_DIR&gt;  
+* **mkdir** &lt;REMOTE_DIR&gt;
 Create a remote directory on Dropbox
 
-* **list** [REMOTE_DIR]  
+* **list** [REMOTE_DIR]
 List the contents of the remote Dropbox folder
 
-* **monitor** [REMOTE_DIR] [TIMEOUT]  
+* **monitor** [REMOTE_DIR] [TIMEOUT]
 Monitor the remote Dropbox folder for changes. If timeout is specified, at the first change event the function will return.
 
-* **share** &lt;REMOTE_FILE&gt;  
+* **share** &lt;REMOTE_FILE&gt;
 Get a public share link for the specified file or directory
 
-* **saveurl** &lt;URL&gt; &lt;REMOTE_DIR&gt;  
+* **saveurl** &lt;URL&gt; &lt;REMOTE_DIR&gt;
 Download a file from an URL to a Dropbox folder directly (the file is NOT downloaded locally)
 
 * **search** &lt;QUERY&gt;
 Search for a specific pattern on Dropbox and returns the list of matching files or directories
 
-* **info**  
+* **info**
 Print some info about your Dropbox account
 
 * **space**
 Print some info about the space usage on your Dropbox account
 
-* **unlink**  
+* **unlink**
 Unlink the script from your Dropbox account
 
 
-**Optional parameters:**  
-* **-f &lt;FILENAME&gt;**  
+**Optional parameters:**
+* **-f &lt;FILENAME&gt;**
 Load the configuration file from a specific file
 
-* **-s**  
+* **-s**
 Skip already existing files when download/upload. Default: Overwrite
 
-* **-d**  
+* **-d**
 Enable DEBUG mode
 
-* **-q**  
+* **-q**
 Quiet mode. Don't show progress meter or messages
 
-* **-h**  
+* **-h**
 Show file sizes in human readable format
 
-* **-p**  
+* **-p**
 Show cURL progress meter
 
-* **-k**  
+* **-k**
 Doesn't check for SSL certificates (insecure)
 
-* **-x &lt;FILENAME&gt;**  
+* **-r &lt;NAMESPACE_ID&gt;**
+changes the root path from the default, which is owned by the token owner, to the one identified by the namespace_id:
+https://help.dropbox.com/installs/move-dropbox-folder.
+To set it as the default, please add the string `API_PATH_ROOT='{".tag": "root", "root": "<NAMESPACE_ID>"}'` to the `$HOME/.dropbox_uploader` file."
+
+* **-x &lt;FILENAME&gt;**
 Ignores/excludes directories or files from syncing.
--x filename -x directoryname. 
+-x filename -x directoryname.
 
 **Examples:**
 ```bash
@@ -192,7 +198,7 @@ To use a proxy server, just set the **https_proxy** environment variable:
     setenv HTTP_PROXY_PASSWORD YYYY
     setenv https_proxy http://192.168.0.1:8080
 ```
-   
+
 ## BASH and Curl installation
 
 **Debian & Ubuntu Linux:**
@@ -207,8 +213,8 @@ To use a proxy server, just set the **https_proxy** environment variable:
     cd /usr/ports/ftp/curl && make install clean
 ```
 
-**Cygwin:**  
-You need to install these packages:  
+**Cygwin:**
+You need to install these packages:
 * curl
 * ca-certificates
 * dos2unix
@@ -252,7 +258,7 @@ docker build https://github.com/sircuri/Dropbox-Uploader.git -f Dockerfile.pi -t
 ```
 then, you can run it as following:
 ```bash
-docker run -i --rm --user=$(id -u):$(id -g) -v <LOCAL_CONFIG_PATH>:/config -v <YOUR_DATA_DIR_MOUNT>:/workdir <TAG> <Arguments> 
+docker run -i --rm --user=$(id -u):$(id -g) -v <LOCAL_CONFIG_PATH>:/config -v <YOUR_DATA_DIR_MOUNT>:/workdir <TAG> <Arguments>
 ```
 This will store the auth token information in the given local directory in `<LOCAL_CONFIG_PATH>`. To ensure access to your mounted directories it can be important to pass a UID and GID to the docker deamon (as stated in the example by the --user argument)
 
